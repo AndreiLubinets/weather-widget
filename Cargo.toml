@@ -1,0 +1,20 @@
+[package]
+name = "qweather"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+cxx = "1.0.83"
+cxx-qt = "0.5"
+cxx-qt-lib = "0.5"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+reqwest = { version = "*", features = ["json", "blocking"] }
+async-trait = "*"
+mockall = "*"
+anyhow = "*"
+
+[build-dependencies]
+cxx-qt-build = "0.5"
