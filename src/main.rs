@@ -1,4 +1,6 @@
-use druid::WindowDesc;
+use api::api::{WeatherApi, Api};
+use druid::{WindowDesc, AppLauncher};
+use view::build_view;
 
 mod api;
 mod state;
@@ -6,17 +8,14 @@ mod view;
 
 
 fn main() {
-    let main_window = WindowDesc::new(build_login_widget())
-        .title(WINDOW_TITLE)
+    let main_window = WindowDesc::new(build_view())
         .window_size((300.0, 400.0));
 
-    // create the initial app state
-    /*let initial_state = State {
-        name: "".into(),
-        password: "".into()
-    };*/
+    let initial_state = WeatherApi::default()
+        .get("London")
+        .expect("Failed to get data from api")
+        .into();
 
-    // start the application
     AppLauncher::with_window(main_window)
         .launch(initial_state)
         .expect("Failed to launch application");

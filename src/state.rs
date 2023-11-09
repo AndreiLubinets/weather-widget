@@ -1,3 +1,5 @@
+use std::ops::Add;
+
 use druid::{Data, Lens};
 
 use crate::api::domain::WeatherData;
@@ -13,7 +15,9 @@ impl From<WeatherData> for State {
     fn from(value: WeatherData) -> Self {
         State { 
             temp: value.weather.temp_c.to_string(), 
-            image: value.weather.condition.icon.clone(), 
+            image: String::new()
+                .add("http:")
+                .add(value.weather.condition.icon.as_str()), 
             location: value.location.to_string() 
         }
     }
