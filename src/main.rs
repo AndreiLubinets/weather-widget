@@ -1,21 +1,23 @@
-use api::api::{TestApi, WeatherApi, Api};
-use cxx_qt_lib::{QGuiApplication, QQmlApplicationEngine, QUrl};
+use druid::WindowDesc;
 
-mod object;
 mod api;
+mod state;
+mod view;
 
 
 fn main() {
-    let mut app =  QGuiApplication::new();
-    let mut engine = QQmlApplicationEngine::new();
+    let main_window = WindowDesc::new(build_login_widget())
+        .title(WINDOW_TITLE)
+        .window_size((300.0, 400.0));
 
-    // Load the QML path into the engine
-    if let Some(engine) = engine.as_mut() {
-        engine.load(&QUrl::from("qrc:/main.qml"));
-    }
+    // create the initial app state
+    /*let initial_state = State {
+        name: "".into(),
+        password: "".into()
+    };*/
 
-    // Start the app
-    if let Some(app) = app.as_mut() {
-        app.exec();
-    }
+    // start the application
+    AppLauncher::with_window(main_window)
+        .launch(initial_state)
+        .expect("Failed to launch application");
 }
