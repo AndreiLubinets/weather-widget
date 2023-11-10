@@ -1,7 +1,7 @@
 use anyhow::{Error, Ok};
 use reqwest::blocking::Client;
 
-use super::domain::{WeatherData, Location};
+use super::domain::{Location, WeatherData};
 
 pub trait Api {
     fn get(&self, location: impl Into<String>) -> Result<WeatherData, anyhow::Error>;
@@ -11,21 +11,24 @@ pub trait Api {
 
 pub struct WeatherApi {
     client: Client,
-    key: String
+    key: String,
 }
 
 impl Default for WeatherApi {
     fn default() -> Self {
-        WeatherApi { client: Client::new(), key: "acd6be4c7fec4cfbb48122154230411".to_owned() }
+        WeatherApi {
+            client: Client::new(),
+            key: "acd6be4c7fec4cfbb48122154230411".to_owned(),
+        }
     }
 }
 
 impl Api for WeatherApi {
-
     fn get(&self, location: impl Into<String>) -> Result<WeatherData, anyhow::Error> {
         println!("Fetching");
         let uri = "http://api.weatherapi.com/v1/current.json";
-        self.client.get(uri)
+        self.client
+            .get(uri)
             .query(&[("key", &self.key), ("q", &location.into())])
             .send()?
             .json::<WeatherData>()
@@ -34,8 +37,8 @@ impl Api for WeatherApi {
 
     fn get_locations(&self) -> Result<Vec<Location>, anyhow::Error> {
         Ok(vec![
-            Location::new("London", "United Kingdom"), 
-            Location::new("Paris", "France")
+            Location::new("London", "United Kingdom"),
+            Location::new("Paris", "France"),
         ])
     }
 }

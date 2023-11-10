@@ -45,7 +45,7 @@ pub struct Condition {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Weather {
-    last_updated_epoch: i64,
+    pub last_updated: String,
     pub temp_c: f32,
     pub condition: Condition
 }

@@ -11,4 +11,5 @@ serde_json = "1.0"
 reqwest = { version = "*", features = ["json", "blocking"] }
 druid = { version = "*", features = ["image", "png"] }
 mockall = "*"
+chrono = { version = "*", features = ["serde"] }
 anyhow = "*"

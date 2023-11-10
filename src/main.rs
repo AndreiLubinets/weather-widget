@@ -1,18 +1,16 @@
-use api::api::{WeatherApi, Api};
-use druid::{WindowDesc, AppLauncher};
+use api::api::{Api, WeatherApi};
+use druid::{AppLauncher, WindowDesc};
 use view::build_view;
 
 mod api;
 mod state;
 mod view;
 
-
 fn main() {
-    let main_window = WindowDesc::new(build_view())
-        .window_size((300.0, 400.0));
+    let main_window = WindowDesc::new(build_view()).window_size((300.0, 400.0));
 
     let initial_state = WeatherApi::default()
-        .get("London")
+        .get("Mahileu, Belarus")
         .expect("Failed to get data from api")
         .into();
 
