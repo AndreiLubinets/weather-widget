@@ -1,7 +1,7 @@
 use crate::api::image_buf::FromUrl;
 use crate::state::State;
 use druid::text::{FontDescriptor, FontWeight};
-use druid::widget::{Align, BackgroundBrush, Container, Flex, Image, Label, ViewSwitcher};
+use druid::widget::{Align, BackgroundBrush, Flex, Image, Label, ViewSwitcher};
 use druid::{Color, Env, ImageBuf, Widget, WidgetExt};
 
 const LOCATION_TEXT_SIZE: f64 = 18.0;
@@ -15,7 +15,25 @@ pub fn build_view() -> impl Widget<State> {
 
     let date_label = Label::new(|data: &State, _env: &Env| data.date.clone());
 
-    let condition_image = ViewSwitcher::new(
+    let condition_icon = get_condition_icon();
+
+    let temp_label = Label::new(|data: &State, _env: &Env| data.temp.clone() + "°C");
+
+    let layout = Flex::column()
+        .with_spacer(1.0)
+        .with_child(location_label)
+        .with_child(date_label)
+        .with_child(condition_icon)
+        .with_child(temp_label);
+
+    let background_color =
+        Color::from_hex_str(BACKGROUND_COLOR).expect("Unable to parse background color");
+
+    Align::centered(layout).background(BackgroundBrush::Color(background_color))
+}
+
+fn get_condition_icon() -> impl Widget<State> {
+    let condition_icon = ViewSwitcher::new(
         |data: &State, _env| data.image.clone(),
         |url, _data, _env| match ImageBuf::from_url(url) {
             Ok(res) => Box::new(Image::new(res)),
@@ -24,17 +42,7 @@ pub fn build_view() -> impl Widget<State> {
     )
     .fix_size(CONDITION_IMAGE_SIZE, CONDITION_IMAGE_SIZE);
 
-    let temp_label = Label::new(|data: &State, _env: &Env| data.temp.clone() + "°C");
-
-    let layout = Flex::column()
-        .with_child(location_label)
-        .with_child(date_label)
-        .with_child(condition_image)
-        .with_spacer(1.0)
-        .with_child(temp_label);
-
-    let background_color =
-        Color::from_hex_str(BACKGROUND_COLOR).expect("Unable to parse background color");
-
-    Align::centered(layout).background(BackgroundBrush::Color(background_color))
+    druid_widget_nursery::WidgetExt::tooltip(condition_icon, |data: &State, _env: &_| {
+        data.image_tooltip.clone()
+    })
 }

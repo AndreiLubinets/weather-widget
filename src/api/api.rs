@@ -26,7 +26,7 @@ impl Default for WeatherApi {
 impl Api for WeatherApi {
     fn get(&self, location: impl Into<String>) -> Result<WeatherData, anyhow::Error> {
         println!("Fetching");
-        let uri = "http://api.weatherapi.com/v1/current.json";
+        let uri = "http://api.weatherapi.com/v1/forecast.json";
         self.client
             .get(uri)
             .query(&[("key", &self.key), ("q", &location.into())])
