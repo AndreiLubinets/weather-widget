@@ -14,12 +14,9 @@ pub struct WeatherApi {
     key: String,
 }
 
-impl Default for WeatherApi {
-    fn default() -> Self {
-        WeatherApi {
-            client: Client::new(),
-            key: "acd6be4c7fec4cfbb48122154230411".to_owned(),
-        }
+impl WeatherApi {
+    pub fn new(key: impl Into<String>) -> Self {
+        Self { client: Client::new(), key: key.into() }
     }
 }
 

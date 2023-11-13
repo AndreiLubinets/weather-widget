@@ -1689,6 +1689,7 @@ dependencies = [
  "reqwest",
  "serde",
  "serde_json",
+ "toml",
 ]
 
 [[package]]
