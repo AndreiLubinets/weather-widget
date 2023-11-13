@@ -9,9 +9,9 @@ mod state;
 mod view;
 
 fn main() {
-    let main_window = WindowDesc::new(build_view()).window_size((300.0, 400.0));
-
     let config = Config::load().expect("Cannot load the configuration file");
+
+    let main_window = WindowDesc::new(build_view()).window_size((config.width, config.height));
 
     let initial_state = WeatherApi::new(&config.key)
         .get(&config.location)
