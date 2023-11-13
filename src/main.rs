@@ -1,21 +1,24 @@
-use api::api::{TestApi, WeatherApi, Api};
-use cxx_qt_lib::{QGuiApplication, QQmlApplicationEngine, QUrl};
+use api::api::{Api, WeatherApi};
+use config::Config;
+use druid::{AppLauncher, WindowDesc};
+use view::build_view;
 
-mod object;
 mod api;
-
+mod config;
+mod state;
+mod view;
 
 fn main() {
-    let mut app =  QGuiApplication::new();
-    let mut engine = QQmlApplicationEngine::new();
+    let main_window = WindowDesc::new(build_view()).window_size((300.0, 400.0));
 
-    // Load the QML path into the engine
-    if let Some(engine) = engine.as_mut() {
-        engine.load(&QUrl::from("qrc:/main.qml"));
-    }
+    let config = Config::load().expect("Cannot load the configuration file");
 
-    // Start the app
-    if let Some(app) = app.as_mut() {
-        app.exec();
-    }
+    let initial_state = WeatherApi::new(&config.key)
+        .get(&config.location)
+        .expect("Failed to get data from api")
+        .into();
+
+    AppLauncher::with_window(main_window)
+        .launch(initial_state)
+        .expect("Failed to launch application");
 }
