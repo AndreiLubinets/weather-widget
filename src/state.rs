@@ -1,10 +1,8 @@
-use std::ops::Add;
-
 use druid::{im::Vector, Data, Lens};
 
 use crate::api::domain::{Forecastday, WeatherData};
 
-#[derive(Clone, Data, Lens)]
+#[derive(Clone, Data, Lens, Debug, PartialEq, Eq)]
 pub struct State {
     pub location: String,
 
@@ -26,7 +24,7 @@ impl From<WeatherData> for State {
     }
 }
 
-#[derive(Clone, Data, Lens, PartialEq, Eq)]
+#[derive(Clone, Data, Lens, PartialEq, Eq, Default, Debug)]
 pub struct DayState {
     pub temp: String,
     pub image: String,

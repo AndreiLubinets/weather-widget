@@ -1,30 +1,28 @@
-use std::{fmt::Display, ops::Add};
+use std::ops::Add;
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, PartialEq, Eq)]
 pub struct WeatherData {
     pub location: Location,
-
-    #[serde(rename = "current")]
-    pub weather: Weather,
 
     pub forecast: Forecast,
 }
 
-impl Display for WeatherData {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_str(&format!(
-            "Location: {}, Weather: Temp: {}",
-            self.location.name, self.weather.temp_c
-        ))
-    }
-}
-
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, PartialEq, Eq)]
 pub struct Location {
     name: String,
     country: String,
+}
+
+impl Location {
+    #[allow(dead_code)]
+    pub fn new(name: impl Into<String>, country: impl Into<String>) -> Self {
+        Self {
+            name: name.into(),
+            country: country.into(),
+        }
+    }
 }
 
 impl ToString for Location {
@@ -33,34 +31,25 @@ impl ToString for Location {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
 pub struct Condition {
     pub text: String,
     pub icon: String,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Weather {
-    pub last_updated: String,
-    pub temp_c: f32,
-    pub condition: Condition,
-}
-
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, PartialEq, Eq)]
 pub struct Forecast {
     pub forecastday: Vec<Forecastday>,
 }
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Deserialize, Debug, Clone, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct Forecastday {
     pub date: String,
-    #[serde(rename = "date_epoch")]
-    pub date_epoch: i64,
     pub day: Day,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct Day {
     #[serde(rename = "maxtemp_c")]
@@ -71,3 +60,5 @@ pub struct Day {
 
     pub condition: Condition,
 }
+
+impl Eq for Day {}

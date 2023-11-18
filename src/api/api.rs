@@ -1,5 +1,5 @@
 use anyhow::{Error, Result};
-use reqwest::blocking::Client;
+use reqwest::{blocking::Client, Url};
 
 use super::domain::WeatherData;
 
@@ -10,26 +10,30 @@ pub trait Api {
 pub struct WeatherApi {
     client: Client,
     key: String,
+    url: String,
 }
 
 impl WeatherApi {
-    pub fn new(key: impl Into<String>) -> Self {
+    pub fn new(key: impl Into<String>, url: impl Into<String>) -> Self {
         Self {
             client: Client::new(),
             key: key.into(),
+            url: url.into(),
         }
     }
 }
 
 impl Api for WeatherApi {
     fn get(&self, location: impl Into<String>) -> Result<WeatherData> {
-        let uri = "http://api.weatherapi.com/v1/forecast.json";
+        let uri = Url::parse(&self.url)?.join("/forecast.json")?;
+        let forecast_days = 4;
+
         self.client
             .get(uri)
             .query(&[
                 ("key", &self.key),
                 ("q", &location.into()),
-                ("days", &"4".to_owned()),
+                ("days", &forecast_days.to_string()),
             ])
             .send()?
             .json::<WeatherData>()
