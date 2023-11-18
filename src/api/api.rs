@@ -25,7 +25,8 @@ impl WeatherApi {
 
 impl Api for WeatherApi {
     fn get(&self, location: impl Into<String>) -> Result<WeatherData> {
-        let uri = Url::parse(&self.url)?.join("/forecast.json")?;
+        let uri = Url::parse(&self.url)?.join("forecast.json")?;
+        println!("Fetching data from: {}", &uri);
         let forecast_days = 4;
 
         self.client

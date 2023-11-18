@@ -33,13 +33,13 @@ fn build_weather_data() -> WeatherData {
 #[test]
 fn get_test() {
     let mut server = mockito::Server::new();
-    let url = server.url();
+    let url = server.url() + "/v1/";
     let weather_api = WeatherApi::new("key", url);
     let expected = build_weather_data();
 
     // Create a mock
     let mock = server
-        .mock("GET", "/forecast.json")
+        .mock("GET", "/v1/forecast.json")
         .match_query(Matcher::UrlEncoded("key".into(), "key".into()))
         .match_query(Matcher::UrlEncoded("q".into(), "location".into()))
         .match_query(Matcher::UrlEncoded("days".into(), "4".into()))

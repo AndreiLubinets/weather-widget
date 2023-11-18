@@ -1,4 +1,4 @@
-url="http://api.weatherapi.com/v1"
+uri="http://api.weatherapi.com/v1/"
 key = ""
 location = ""
 width = 200.0
