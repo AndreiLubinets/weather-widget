@@ -8,12 +8,17 @@ mod config;
 mod state;
 mod view;
 
+const APPLICATION_TITLE: &str = "Weather Widget";
+
 fn main() {
-    let main_window = WindowDesc::new(build_view()).window_size((300.0, 400.0));
+    let config = Config::load("Config.toml").expect("Cannot load the configuration file");
 
-    let config = Config::load().expect("Cannot load the configuration file");
+    let main_window = WindowDesc::new(build_view())
+        .title(APPLICATION_TITLE)
+        .show_titlebar(false)
+        .window_size((config.width, config.height));
 
-    let initial_state = WeatherApi::new(&config.key)
+    let initial_state = WeatherApi::new(&config.key, &config.uri)
         .get(&config.location)
         .expect("Failed to get data from api")
         .into();

@@ -1,2 +1,5 @@
-key=""
-location=""
+url="http://api.weatherapi.com/v1"
+key = ""
+location = ""
+width = 200.0
+height = 300.0

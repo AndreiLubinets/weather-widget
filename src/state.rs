@@ -1,28 +1,44 @@
-use std::ops::Add;
+use druid::{im::Vector, Data, Lens};
 
-use druid::{Data, Lens};
+use crate::api::domain::{Forecastday, WeatherData};
 
-use crate::api::domain::WeatherData;
-
-#[derive(Clone, Data, Lens)]
+#[derive(Clone, Data, Lens, Debug, PartialEq, Eq)]
 pub struct State {
-    pub temp: String,
-    pub image: String,
-    pub image_tooltip: String,
     pub location: String,
-    pub date: String,
+
+    #[data(eq)]
+    pub day_states: Vector<DayState>,
 }
 
 impl From<WeatherData> for State {
     fn from(value: WeatherData) -> Self {
         State {
-            temp: value.weather.temp_c.to_string(),
-            image: String::new()
-                .add("http:")
-                .add(value.weather.condition.icon.as_str()),
-            image_tooltip: value.weather.condition.text,
             location: value.location.to_string(),
-            date: value.weather.last_updated,
+            day_states: value
+                .forecast
+                .forecastday
+                .iter()
+                .map(|day| DayState::from(day.clone()))
+                .collect(),
+        }
+    }
+}
+
+#[derive(Clone, Data, Lens, PartialEq, Eq, Default, Debug)]
+pub struct DayState {
+    pub temp: String,
+    pub image: String,
+    pub image_tooltip: String,
+    pub date: String,
+}
+
+impl From<Forecastday> for DayState {
+    fn from(value: Forecastday) -> Self {
+        DayState {
+            temp: value.day.maxtemp_c.to_string(),
+            image: String::from("http:") + &value.day.condition.icon,
+            image_tooltip: value.day.condition.text,
+            date: value.date,
         }
     }
 }
