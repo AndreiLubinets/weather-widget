@@ -1,12 +1,17 @@
+use std::sync::OnceLock;
+
 use anyhow::{Error, Result};
 use reqwest::{blocking::Client, Url};
 
 use super::domain::WeatherData;
 
+pub(crate) static GLOBAL_WEBAPI: OnceLock<WeatherApi> = OnceLock::new();
+
 pub trait Api {
     fn get(&self, location: impl Into<String>) -> Result<WeatherData>;
 }
 
+#[derive(Debug)]
 pub struct WeatherApi {
     client: Client,
     key: String,
@@ -20,6 +25,10 @@ impl WeatherApi {
             key: key.into(),
             url: url.into(),
         }
+    }
+
+    pub fn set_as_global(self) {
+        GLOBAL_WEBAPI.set(self).unwrap();
     }
 }
 

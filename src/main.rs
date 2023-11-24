@@ -1,4 +1,4 @@
-use api::api::{Api, WeatherApi};
+use api::api::{Api, WeatherApi, GLOBAL_WEBAPI};
 use config::Config;
 use druid::{AppLauncher, WindowDesc};
 use view::build_view;
@@ -18,7 +18,11 @@ fn main() {
         .show_titlebar(false)
         .window_size((config.width, config.height));
 
-    let initial_state = WeatherApi::new(&config.key, &config.uri)
+    WeatherApi::new(&config.key, &config.uri).set_as_global();
+
+    let initial_state = GLOBAL_WEBAPI
+        .get()
+        .unwrap()
         .get(&config.location)
         .expect("Failed to get data from api")
         .into();
