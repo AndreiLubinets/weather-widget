@@ -1,6 +1,7 @@
 use anyhow::{Error, Result};
 use druid::ImageBuf;
-use reqwest::{blocking, IntoUrl};
+use futures::TryFutureExt;
+use reqwest::IntoUrl;
 
 pub trait FromUrl {
     fn from_url(url: impl IntoUrl) -> Result<Self>
@@ -10,7 +11,8 @@ pub trait FromUrl {
 
 impl FromUrl for ImageBuf {
     fn from_url(url: impl IntoUrl) -> Result<Self> {
-        let bytes = blocking::get(url)?.bytes()?;
+        //TODO: remove blocking
+        let bytes = futures::executor::block_on(reqwest::get(url).and_then(|res| res.bytes()))?;
         ImageBuf::from_data(&bytes).map_err(|err| Error::msg(err.to_string()))
     }
 }

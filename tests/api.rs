@@ -2,7 +2,7 @@ use std::{fs, io};
 
 use mockito::Matcher;
 use qweather::api::{
-    api::{Api, WeatherApi},
+    api::WeatherApi,
     domain::{Condition, Day, Forecast, Forecastday, Location, WeatherData},
 };
 
@@ -30,8 +30,8 @@ fn build_weather_data() -> WeatherData {
     WeatherData { location, forecast }
 }
 
-#[test]
-fn get_test() {
+#[tokio::test]
+async fn get_test() {
     let mut server = mockito::Server::new();
     let url = server.url() + "/v1/";
     let weather_api = WeatherApi::new("key", url);
@@ -48,24 +48,24 @@ fn get_test() {
         .with_body(load_response().unwrap())
         .create();
 
-    let actual = weather_api.get("location").unwrap();
+    let actual = weather_api.get("location").await.unwrap();
 
     assert_eq!(expected, actual);
     mock.assert();
 }
 
-#[test]
-fn get_invalid_url() {
+#[tokio::test]
+async fn get_invalid_url() {
     let url = "unparsable string";
     let weather_api = WeatherApi::new("key", url);
 
-    let actual = weather_api.get("location");
+    let actual = weather_api.get("location").await;
 
     assert!(actual.is_err());
 }
 
-#[test]
-fn get_unparsable_response() {
+#[tokio::test]
+async fn get_unparsable_response() {
     let mut server = mockito::Server::new();
     let url = server.url();
     let weather_api = WeatherApi::new("key", url);
@@ -81,8 +81,25 @@ fn get_unparsable_response() {
         .with_body("")
         .create();
 
-    let actual = weather_api.get("location");
+    let actual = weather_api.get("location").await;
 
     assert!(actual.is_err());
     mock.assert();
+}
+
+#[test]
+fn global_test() {
+    let weather_api = WeatherApi::new("key", "url");
+
+    weather_api.set_as_global();
+
+    let result = std::panic::catch_unwind(WeatherApi::global);
+
+    assert!(result.is_ok());
+}
+
+#[test]
+#[should_panic]
+fn global_not_set_test() {
+    WeatherApi::global();
 }

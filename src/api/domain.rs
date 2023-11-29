@@ -43,21 +43,15 @@ pub struct Forecast {
 }
 
 #[derive(Deserialize, Debug, Clone, PartialEq, Eq)]
-#[serde(rename_all = "camelCase")]
 pub struct Forecastday {
     pub date: String,
     pub day: Day,
 }
 
 #[derive(Debug, Deserialize, Clone, PartialEq)]
-#[serde(rename_all = "camelCase")]
 pub struct Day {
-    #[serde(rename = "maxtemp_c")]
     pub maxtemp_c: f64,
-
-    #[serde(rename = "mintemp_c")]
     pub mintemp_c: f64,
-
     pub condition: Condition,
 }
 

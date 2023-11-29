@@ -16,7 +16,7 @@ fn image_buf_from_url_test() {
     let mock = server
         .mock("GET", "/imagepath")
         .with_status(200)
-        .with_header("content-type", "text/plain")
+        .with_header("content-type", "image/x-png")
         .with_body(body)
         .create();
 
