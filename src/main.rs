@@ -1,6 +1,7 @@
-use api::api::{Api, WeatherApi};
+use api::api::WeatherApi;
 use config::Config;
 use druid::{AppLauncher, WindowDesc};
+use state::State;
 use view::build_view;
 
 mod api;
@@ -10,7 +11,8 @@ mod view;
 
 const APPLICATION_TITLE: &str = "Weather Widget";
 
-fn main() {
+#[tokio::main]
+async fn main() {
     let config = Config::load("Config.toml").expect("Cannot load the configuration file");
 
     let main_window = WindowDesc::new(build_view())
@@ -18,12 +20,10 @@ fn main() {
         .show_titlebar(false)
         .window_size((config.width, config.height));
 
-    let initial_state = WeatherApi::new(&config.key, &config.uri)
-        .get(&config.location)
-        .expect("Failed to get data from api")
-        .into();
+    WeatherApi::new(&config.key, &config.uri).set_as_global();
 
     AppLauncher::with_window(main_window)
-        .launch(initial_state)
+        .log_to_console()
+        .launch(State::initial(&config.location))
         .expect("Failed to launch application");
 }

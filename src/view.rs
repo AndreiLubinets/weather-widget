@@ -1,46 +1,81 @@
+use crate::api::api::WeatherApi;
 use crate::api::image_buf::FromUrl;
 use crate::state::{DayState, State};
 use druid::text::{FontDescriptor, FontWeight};
-use druid::widget::{Align, BackgroundBrush, Flex, Image, Label, List, ViewSwitcher};
+use druid::widget::{Align, BackgroundBrush, Flex, Image, Label, List, Spinner, ViewSwitcher};
 use druid::{Color, Env, ImageBuf, Widget, WidgetExt};
+use druid_widget_nursery::FutureWidget;
 
-const LOCATION_TEXT_SIZE: f64 = 18.0;
-const CONDITION_IMAGE_SIZE: f64 = 64.0;
+const LOCATION_TEXT_SIZE: f64 = 18.;
+const SPINNER_SIZE: f64 = 32.;
+const ERROR_TEXT_SIZE: f64 = 14.;
+const CONDITION_IMAGE_SIZE: f64 = 64.;
 const BACKGROUND_COLOR: &str = "#2a2a3e";
 
 pub fn build_view() -> impl Widget<State> {
+    let error_label = Label::new(|data: &State, _env: &Env| data.error.clone().unwrap_or_default())
+        .with_font(FontDescriptor::default().with_weight(FontWeight::BOLD))
+        .with_text_color(Color::RED)
+        .with_text_size(ERROR_TEXT_SIZE);
+
     let location_label = Label::new(|data: &State, _env: &Env| data.location.to_string())
         .with_font(FontDescriptor::default().with_weight(FontWeight::BOLD))
         .with_text_size(LOCATION_TEXT_SIZE);
 
-    let day_list = List::new(build_day_widget)
-        .horizontal()
-        .with_spacing(10.0)
-        .lens(State::day_states);
+    let day_list = build_day_list();
 
     let layout = Flex::column()
-        .with_spacer(3.0)
+        .with_spacer(10.0)
+        .with_child(error_label)
         .with_child(location_label)
         .with_child(day_list);
 
-    let background_color =
-        Color::from_hex_str(BACKGROUND_COLOR).expect("Unable to parse background color");
+    let background_color = Color::from_hex_str(BACKGROUND_COLOR).unwrap_or(Color::BLACK);
 
     Align::centered(layout).background(BackgroundBrush::Color(background_color))
 }
 
-pub fn build_day_widget() -> impl Widget<DayState> {
+fn build_day_list() -> impl Widget<State> {
+    FutureWidget::new(
+        |data: &State, _env| WeatherApi::global().get(data.location.clone()),
+        Spinner::new().fix_size(SPINNER_SIZE, SPINNER_SIZE),
+        |result, data, _env| {
+            let error_flag = match *result {
+                Ok(res) => {
+                    *data = res.into();
+                    false
+                }
+                Err(err) => {
+                    println!("{}", err);
+                    data.error = Some("Unable to get data from the api".to_string());
+                    true
+                }
+            };
+            List::new(build_day_widget)
+                .horizontal()
+                .with_spacing(10.0)
+                .lens(State::day_states)
+                .disabled_if(move |_state, _env| error_flag)
+                .boxed()
+        },
+    )
+    .center()
+}
+
+fn build_day_widget() -> impl Widget<DayState> {
     let date_label = Label::new(|data: &DayState, _env: &Env| data.date.clone());
 
     let condition_icon = get_condition_icon();
 
-    let temp_label = Label::new(|data: &DayState, _env: &Env| data.temp.clone() + "°C");
+    let max_temp_label = Label::new(|data: &DayState, _env: &Env| data.max_temp.clone());
+    let min_temp_label = Label::new(|data: &DayState, _env: &Env| data.min_temp.clone());
 
     let layout = Flex::column()
         .with_spacer(1.0)
         .with_child(date_label)
         .with_child(condition_icon)
-        .with_child(temp_label);
+        .with_child(max_temp_label)
+        .with_child(min_temp_label);
 
     Align::centered(layout)
 }
@@ -49,8 +84,8 @@ fn get_condition_icon() -> impl Widget<DayState> {
     let condition_icon = ViewSwitcher::new(
         |data: &DayState, _env| data.image.clone(),
         |url, _data, _env| match ImageBuf::from_url(url) {
-            Ok(res) => Box::new(Image::new(res)),
-            Err(_) => Box::new(Image::new(ImageBuf::empty())),
+            Ok(res) => Image::new(res).boxed(),
+            Err(_) => Image::new(ImageBuf::empty()).boxed(),
         },
     )
     .fix_size(CONDITION_IMAGE_SIZE, CONDITION_IMAGE_SIZE);

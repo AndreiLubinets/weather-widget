@@ -2,12 +2,23 @@ use druid::{im::Vector, Data, Lens};
 
 use crate::api::domain::{Forecastday, WeatherData};
 
-#[derive(Clone, Data, Lens, Debug, PartialEq, Eq)]
+#[derive(Clone, Data, Lens, Debug, PartialEq, Eq, Default)]
 pub struct State {
     pub location: String,
 
     #[data(eq)]
     pub day_states: Vector<DayState>,
+
+    pub error: Option<String>,
+}
+
+impl State {
+    pub fn initial(location: impl Into<String>) -> Self {
+        State {
+            location: location.into(),
+            ..Default::default()
+        }
+    }
 }
 
 impl From<WeatherData> for State {
@@ -20,13 +31,15 @@ impl From<WeatherData> for State {
                 .iter()
                 .map(|day| DayState::from(day.clone()))
                 .collect(),
+            error: None,
         }
     }
 }
 
 #[derive(Clone, Data, Lens, PartialEq, Eq, Default, Debug)]
 pub struct DayState {
-    pub temp: String,
+    pub max_temp: String,
+    pub min_temp: String,
     pub image: String,
     pub image_tooltip: String,
     pub date: String,
@@ -35,7 +48,8 @@ pub struct DayState {
 impl From<Forecastday> for DayState {
     fn from(value: Forecastday) -> Self {
         DayState {
-            temp: value.day.maxtemp_c.to_string(),
+            max_temp: value.day.maxtemp_c.to_string() + "°C",
+            min_temp: value.day.mintemp_c.to_string() + "°C",
             image: String::from("http:") + &value.day.condition.icon,
             image_tooltip: value.day.condition.text,
             date: value.date,
