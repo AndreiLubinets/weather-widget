@@ -1,7 +1,7 @@
 use std::{fs, io};
 
 use mockito::Matcher;
-use qweather::api::{
+use weather_widget::api::{
     api::WeatherApi,
     domain::{Condition, Day, Forecast, Forecastday, Location, WeatherData},
 };

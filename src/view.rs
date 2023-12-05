@@ -3,14 +3,14 @@ use crate::api::image_buf::FromUrl;
 use crate::state::{DayState, State};
 use druid::text::{FontDescriptor, FontWeight};
 use druid::widget::{Align, BackgroundBrush, Flex, Image, Label, List, Spinner, ViewSwitcher};
-use druid::{Color, Env, ImageBuf, Widget, WidgetExt};
+use druid::{Color, Env, ImageBuf, Key, Widget, WidgetExt};
 use druid_widget_nursery::FutureWidget;
 
 const LOCATION_TEXT_SIZE: f64 = 18.;
 const SPINNER_SIZE: f64 = 32.;
 const ERROR_TEXT_SIZE: f64 = 14.;
 const CONDITION_IMAGE_SIZE: f64 = 64.;
-const BACKGROUND_COLOR: &str = "#2a2a3e";
+pub const BACKGROUND_COLOR_KEY: Key<Color> = Key::new("org.weather-widget.background");
 
 pub fn build_view() -> impl Widget<State> {
     let error_label = Label::new(|data: &State, _env: &Env| data.error.clone().unwrap_or_default())
@@ -30,9 +30,7 @@ pub fn build_view() -> impl Widget<State> {
         .with_child(location_label)
         .with_child(day_list);
 
-    let background_color = Color::from_hex_str(BACKGROUND_COLOR).unwrap_or(Color::BLACK);
-
-    Align::centered(layout).background(BackgroundBrush::Color(background_color))
+    Align::centered(layout).background(BackgroundBrush::from(BACKGROUND_COLOR_KEY))
 }
 
 fn build_day_list() -> impl Widget<State> {

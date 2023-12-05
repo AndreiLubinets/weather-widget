@@ -1,8 +1,10 @@
 use api::api::WeatherApi;
 use config::Config;
-use druid::{AppLauncher, WindowDesc};
+use druid::{AppLauncher, Env, WindowDesc};
 use state::State;
 use view::build_view;
+
+extern crate derive_builder;
 
 mod api;
 mod config;
@@ -18,12 +20,15 @@ async fn main() {
     let main_window = WindowDesc::new(build_view())
         .title(APPLICATION_TITLE)
         .show_titlebar(false)
-        .window_size((config.width, config.height));
+        .window_size(config.get_window_size());
+
+    let initial_state = State::initial(&config.location);
 
     WeatherApi::new(&config.key, &config.uri).set_as_global();
 
     AppLauncher::with_window(main_window)
+        .configure_env(move |env: &mut Env, _data| config.set_env(env))
         .log_to_console()
-        .launch(State::initial(&config.location))
+        .launch(initial_state)
         .expect("Failed to launch application");
 }

@@ -1,5 +1,8 @@
 uri = "uri"
 key = "key"
 location = "location"
-width = 200.0
-height = 300.0
+bg_color = "#2a2a3e"
+
+[size]
+width = 500.0
+height = 400.0

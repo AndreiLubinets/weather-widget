@@ -1,5 +1,5 @@
 use druid::im::vector;
-use qweather::{
+use weather_widget::{
     api::domain::{Condition, Day, Forecast, Forecastday, Location, WeatherData},
     state::{DayState, State},
 };

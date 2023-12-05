@@ -1,7 +1,7 @@
 use std::fs;
 
 use druid::ImageBuf;
-use qweather::api::image_buf::FromUrl;
+use weather_widget::api::image_buf::FromUrl;
 
 #[test]
 #[ignore = "Requires fix"]
