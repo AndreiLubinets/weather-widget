@@ -10,7 +10,6 @@ use crate::view::BACKGROUND_COLOR_KEY;
 #[derive(Serialize, Deserialize, Builder, Debug, PartialEq, Eq)]
 pub struct Config {
     pub uri: String,
-    pub key: String,
     pub location: String,
     bg_color: Option<String>,
     size: Option<Size>,
@@ -27,12 +26,13 @@ impl Config {
     }
 
     pub fn set_env(&self, env: &mut Env) {
-        if let Some(color) = &self.bg_color {
-            env.set(
-                BACKGROUND_COLOR_KEY,
-                Color::from_hex_str(color).unwrap_or(Color::BLACK),
-            );
-        };
+        let color = &self
+            .bg_color
+            .as_ref()
+            .and_then(|hex| Color::from_hex_str(hex).ok())
+            .unwrap_or(Color::rgb8(42, 42, 62));
+
+        env.set(BACKGROUND_COLOR_KEY, *color);
     }
 }
 

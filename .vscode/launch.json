@@ -1,0 +1,140 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in library 'weather-widget'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--lib",
+                    "--package=weather-widget"
+                ],
+                "filter": {
+                    "name": "weather-widget",
+                    "kind": "lib"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'weather-widget'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=weather-widget",
+                    "--package=weather-widget"
+                ],
+                "filter": {
+                    "name": "weather-widget",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in executable 'weather-widget'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=weather-widget",
+                    "--package=weather-widget"
+                ],
+                "filter": {
+                    "name": "weather-widget",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug integration test 'api'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--test=api",
+                    "--package=weather-widget"
+                ],
+                "filter": {
+                    "name": "api",
+                    "kind": "test"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug integration test 'config'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--test=config",
+                    "--package=weather-widget"
+                ],
+                "filter": {
+                    "name": "config",
+                    "kind": "test"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug integration test 'image_buf'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--test=image_buf",
+                    "--package=weather-widget"
+                ],
+                "filter": {
+                    "name": "image_buf",
+                    "kind": "test"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug integration test 'state'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--test=state",
+                    "--package=weather-widget"
+                ],
+                "filter": {
+                    "name": "state",
+                    "kind": "test"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}

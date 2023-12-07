@@ -9,7 +9,6 @@ use weather_widget::{
 fn build_config() -> Config {
     ConfigBuilder::default()
         .uri("uri".to_owned())
-        .key("key".to_owned())
         .location("location".to_owned())
         .bg_color(Some("#2a2a3e".to_owned()))
         .size(Some(Size::new(500., 400.)))
@@ -44,13 +43,29 @@ fn set_env_test() {
 fn set_env_unparsable_hex_color_test() {
     let config = ConfigBuilder::default()
         .uri("uri".to_owned())
-        .key("key".to_owned())
         .location("location".to_owned())
         .bg_color(Some("string".to_owned()))
         .size(None)
         .build()
         .unwrap();
-    let expected = Color::BLACK;
+    let expected = Color::rgb8(42, 42, 62);
+    let mut actual = Env::empty();
+
+    config.set_env(&mut actual);
+
+    assert_eq!(expected, actual.get(BACKGROUND_COLOR_KEY));
+}
+
+#[test]
+fn set_env_default_color_test() {
+    let config = ConfigBuilder::default()
+        .uri("uri".to_owned())
+        .location("location".to_owned())
+        .bg_color(None)
+        .size(None)
+        .build()
+        .unwrap();
+    let expected = Color::rgb(42., 42., 62.);
     let mut actual = Env::empty();
 
     config.set_env(&mut actual);
@@ -75,7 +90,6 @@ fn get_window_size_test() {
 fn get_window_size_default_test() {
     let config = ConfigBuilder::default()
         .uri("uri".to_owned())
-        .key("key".to_owned())
         .location("location".to_owned())
         .bg_color(None)
         .size(None)
