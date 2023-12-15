@@ -2,7 +2,7 @@ use crate::api::api::WeatherApi;
 use crate::api::image_buf::FromUrl;
 use crate::state::{DayState, State};
 use druid::text::{FontDescriptor, FontWeight};
-use druid::widget::{Align, BackgroundBrush, Flex, Image, Label, List, Spinner, ViewSwitcher};
+use druid::widget::{Align, BackgroundBrush, Flex, Image, Label, List, Spinner};
 use druid::{Color, Env, ImageBuf, Key, Widget, WidgetExt};
 use druid_widget_nursery::FutureWidget;
 
@@ -79,11 +79,18 @@ fn build_day_widget() -> impl Widget<DayState> {
 }
 
 fn get_condition_icon() -> impl Widget<DayState> {
-    let condition_icon = ViewSwitcher::new(
-        |data: &DayState, _env| data.image.clone(),
-        |url, _data, _env| match ImageBuf::from_url(url) {
-            Ok(res) => Image::new(res).boxed(),
-            Err(_) => Image::new(ImageBuf::empty()).boxed(),
+    let condition_icon = FutureWidget::new(
+        |data: &DayState, _env| ImageBuf::from_url(data.image.clone()),
+        Image::new(ImageBuf::empty()),
+        |result, _data, _env| {
+            match *result {
+                Ok(res) => Image::new(res),
+                Err(err) => {
+                    println!("{}", err);
+                    Image::new(ImageBuf::empty())
+                }
+            }
+            .boxed()
         },
     )
     .fix_size(CONDITION_IMAGE_SIZE, CONDITION_IMAGE_SIZE);
