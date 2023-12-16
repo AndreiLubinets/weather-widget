@@ -3,9 +3,8 @@ use std::fs;
 use druid::ImageBuf;
 use weather_widget::api::image_buf::FromUrl;
 
-#[test]
-#[ignore = "Requires fix"]
-fn image_buf_from_url_test() {
+#[tokio::test]
+async fn image_buf_from_url_test() {
     let mut server = mockito::Server::new();
     let url = server.url();
     let image_url = String::from(&url) + "/imagepath.png";
@@ -14,13 +13,13 @@ fn image_buf_from_url_test() {
 
     // Create a mock
     let mock = server
-        .mock("GET", "/imagepath")
+        .mock("GET", "/imagepath.png")
         .with_status(200)
         .with_header("content-type", "image/x-png")
         .with_body(body)
         .create();
 
-    let actual = ImageBuf::from_url(image_url).unwrap();
+    let actual = ImageBuf::from_url(image_url).await.unwrap();
 
     assert_eq!(expected.raw_pixels(), actual.raw_pixels());
     mock.assert();

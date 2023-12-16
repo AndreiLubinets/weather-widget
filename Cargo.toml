@@ -1,6 +1,6 @@
 [package]
 name = "weather-widget"
-version = "0.2.1"
+version = "0.2.2"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -11,14 +11,21 @@ serde_json = "1.0"
 reqwest = { version = "0.11.*", features = ["json"] }
 druid = { version = "0.8.3", features = ["image", "png"] }
 druid-widget-nursery = { git = "https://github.com/linebender/druid-widget-nursery", features = ["async"] }
-futures = "0.3.*"
 tokio = { version = "1.34.0", features = ["rt", "macros", "rt-multi-thread"] }
 anyhow = "1.0.*"
 toml = "0.8.*"
 derive_builder = "0.12.0"
+async-trait = "0.1.74"
 
 [dev-dependencies]
 mockito = "1.2.0"
 
 [build-dependencies]
 dotenv = "0.15.0"
+
+[profile.release]
+opt-level = 'z'
+lto = true
+codegen-units = 1
+panic = 'abort'
+strip = true

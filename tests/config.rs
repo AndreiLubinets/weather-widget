@@ -65,7 +65,7 @@ fn set_env_default_color_test() {
         .size(None)
         .build()
         .unwrap();
-    let expected = Color::rgb(42., 42., 62.);
+    let expected = Color::rgb8(42, 42, 62);
     let mut actual = Env::empty();
 
     config.set_env(&mut actual);
