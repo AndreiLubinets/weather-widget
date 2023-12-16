@@ -22,3 +22,10 @@ mockito = "1.2.0"
 
 [build-dependencies]
 dotenv = "0.15.0"
+
+[profile.release]
+opt-level = 'z'
+lto = true
+codegen-units = 1
+panic = 'abort'
+strip = true
