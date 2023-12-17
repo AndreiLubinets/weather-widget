@@ -1,3 +1,4 @@
+use derive_builder::Builder;
 use druid::{im::Vector, Data, Lens};
 
 use crate::api::domain::{Forecastday, WeatherData};
@@ -36,13 +37,13 @@ impl From<WeatherData> for State {
     }
 }
 
-#[derive(Clone, Data, Lens, PartialEq, Eq, Default, Debug)]
+#[derive(Clone, Data, Lens, PartialEq, Eq, Default, Debug, Builder)]
 pub struct DayState {
-    pub max_temp: String,
-    pub min_temp: String,
     pub image: String,
     pub image_tooltip: String,
-    pub date: String,
+    max_temp: String,
+    min_temp: String,
+    date: String,
 }
 
 impl From<Forecastday> for DayState {

@@ -4,7 +4,7 @@ use crate::state::{DayState, State};
 use druid::text::{FontDescriptor, FontWeight};
 use druid::widget::{Align, BackgroundBrush, Flex, Image, Label, List, Spinner};
 use druid::{Color, Env, ImageBuf, Key, Widget, WidgetExt};
-use druid_widget_nursery::FutureWidget;
+use druid_widget_nursery::{FutureWidget, WidgetExt as NurseryWidgetExt};
 
 const LOCATION_TEXT_SIZE: f64 = 18.;
 const SPINNER_SIZE: f64 = 32.;
@@ -18,9 +18,10 @@ pub fn build_view() -> impl Widget<State> {
         .with_text_color(Color::RED)
         .with_text_size(ERROR_TEXT_SIZE);
 
-    let location_label = Label::new(|data: &State, _env: &Env| data.location.to_string())
+    let location_label = Label::raw()
         .with_font(FontDescriptor::default().with_weight(FontWeight::BOLD))
-        .with_text_size(LOCATION_TEXT_SIZE);
+        .with_text_size(LOCATION_TEXT_SIZE)
+        .lens(State::location);
 
     let day_list = build_day_list();
 
@@ -61,12 +62,12 @@ fn build_day_list() -> impl Widget<State> {
 }
 
 fn build_day_widget() -> impl Widget<DayState> {
-    let date_label = Label::new(|data: &DayState, _env: &Env| data.date.clone());
+    let date_label = Label::raw().lens(DayState::date);
 
     let condition_icon = get_condition_icon();
 
-    let max_temp_label = Label::new(|data: &DayState, _env: &Env| data.max_temp.clone());
-    let min_temp_label = Label::new(|data: &DayState, _env: &Env| data.min_temp.clone());
+    let max_temp_label = Label::raw().lens(DayState::max_temp);
+    let min_temp_label = Label::raw().lens(DayState::min_temp);
 
     let layout = Flex::column()
         .with_spacer(1.0)
@@ -79,7 +80,7 @@ fn build_day_widget() -> impl Widget<DayState> {
 }
 
 fn get_condition_icon() -> impl Widget<DayState> {
-    let condition_icon = FutureWidget::new(
+    FutureWidget::new(
         |data: &DayState, _env| ImageBuf::from_url(data.image.clone()),
         Image::new(ImageBuf::empty()),
         |result, _data, _env| {
@@ -93,9 +94,6 @@ fn get_condition_icon() -> impl Widget<DayState> {
             .boxed()
         },
     )
-    .fix_size(CONDITION_IMAGE_SIZE, CONDITION_IMAGE_SIZE);
-
-    druid_widget_nursery::WidgetExt::tooltip(condition_icon, |data: &DayState, _env: &_| {
-        data.image_tooltip.clone()
-    })
+    .fix_size(CONDITION_IMAGE_SIZE, CONDITION_IMAGE_SIZE)
+    .tooltip(|data: &DayState, _env: &_| data.image_tooltip.clone())
 }

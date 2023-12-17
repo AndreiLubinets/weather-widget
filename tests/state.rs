@@ -1,7 +1,7 @@
 use druid::im::vector;
 use weather_widget::{
     api::domain::{Condition, Day, Forecast, Forecastday, Location, WeatherData},
-    state::{DayState, State},
+    state::{DayStateBuilder, State},
 };
 
 fn build_weather_data() -> WeatherData {
@@ -27,13 +27,14 @@ fn build_weather_data() -> WeatherData {
 #[test]
 fn state_from_weather_data_test() {
     let data = build_weather_data();
-    let date_states = vector![DayState {
-        max_temp: "20°C".to_owned(),
-        min_temp: "15°C".to_owned(),
-        image: "http://cdn.api.com".to_owned(),
-        image_tooltip: "sunny".to_owned(),
-        date: "2023-01-01".to_owned()
-    }];
+    let date_states = vector![DayStateBuilder::default()
+        .max_temp("20°C".to_owned())
+        .min_temp("15°C".to_owned())
+        .image("http://cdn.api.com".to_owned())
+        .image_tooltip("sunny".to_owned())
+        .date("2023-01-01".to_owned())
+        .build()
+        .unwrap()];
     let expected = State {
         location: "London, United Kingdom".to_owned(),
         day_states: date_states,

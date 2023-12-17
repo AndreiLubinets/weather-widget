@@ -24,7 +24,3 @@ bg_color = "#2a2a3e" #Optional
 width = 500.0
 height = 400.0
 ```
-
-### Tested on:
-+ Hyprland
-+ KDE Xorg
