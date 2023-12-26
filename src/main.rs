@@ -15,7 +15,11 @@ const APPLICATION_TITLE: &str = "Weather Widget";
 
 #[tokio::main]
 async fn main() {
-    let config = Config::load("Config.toml").expect("Cannot load the configuration file");
+    simple_logger::init().expect("Failed to start logger");
+
+    let config = Config::load("Config.toml")
+        .or_else(|_| Config::load_from_os_config())
+        .expect("No configuration file was found");
     let key = env!("API_KEY");
 
     let main_window = WindowDesc::new(build_view())
@@ -29,7 +33,6 @@ async fn main() {
 
     AppLauncher::with_window(main_window)
         .configure_env(move |env: &mut Env, _data| config.set_env(env))
-        .log_to_console()
         .launch(initial_state)
         .expect("Failed to launch application");
 }

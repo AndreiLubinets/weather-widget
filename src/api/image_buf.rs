@@ -1,4 +1,4 @@
-use anyhow::{Error, Result};
+use anyhow::Result;
 use async_trait::async_trait;
 use druid::ImageBuf;
 use reqwest::IntoUrl;
@@ -14,6 +14,6 @@ pub trait FromUrl {
 impl FromUrl for ImageBuf {
     async fn from_url<T: IntoUrl + Send>(url: T) -> Result<Self> {
         let bytes = reqwest::get(url).await?.bytes().await?;
-        ImageBuf::from_data(&bytes).map_err(|err| Error::msg(err.to_string()))
+        ImageBuf::from_data(&bytes).map_err(|err| anyhow::anyhow!(err))
     }
 }

@@ -1,6 +1,6 @@
 [package]
 name = "weather-widget"
-version = "0.2.2"
+version = "0.2.3"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -16,6 +16,8 @@ anyhow = "1.0.*"
 toml = "0.8.*"
 derive_builder = "0.12.0"
 async-trait = "0.1.74"
+log = "0.4.20"
+simple_logger = "4.3.0"
 
 [dev-dependencies]
 mockito = "1.2.0"

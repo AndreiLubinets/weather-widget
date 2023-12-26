@@ -1,11 +1,12 @@
 use std::{sync::OnceLock, time::Duration};
 
 use anyhow::{Error, Result};
+use log::info;
 use reqwest::{Client, Url};
 
 use super::domain::WeatherData;
 
-pub(crate) static GLOBAL_WEBAPI: OnceLock<WeatherApi> = OnceLock::new();
+static GLOBAL_WEBAPI: OnceLock<WeatherApi> = OnceLock::new();
 
 #[derive(Debug)]
 pub struct WeatherApi {
@@ -25,7 +26,7 @@ impl WeatherApi {
 
     pub async fn get(&self, location: impl Into<String>) -> Result<WeatherData> {
         let uri = Url::parse(&self.url)?.join("forecast.json")?;
-        println!("Fetching data from: {}", &uri);
+        info!("Fetching data from: {}", &uri);
         let forecast_days = 4;
 
         self.client
