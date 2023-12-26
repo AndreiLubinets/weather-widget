@@ -34,5 +34,5 @@ build() {
 package() {
     cd $pkgname
     install -Dt "$pkgdir/usr/bin" target/release/weather-widget
-    install -dm755 "$pkgdir/.config/$pkgname"
+    install -dm755 "$pkgdir/home/$USER/.config/$pkgname"
 }
