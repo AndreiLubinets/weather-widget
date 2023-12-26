@@ -1,4 +1,4 @@
-use std::{fs, path::PathBuf};
+use std::{env, fs, path::PathBuf};
 
 use anyhow::Error;
 use derive_builder::Builder;
@@ -6,6 +6,8 @@ use druid::{Color, Env};
 use serde::{Deserialize, Serialize};
 
 use crate::view::BACKGROUND_COLOR_KEY;
+
+const DEFAULT_BG_COLOR: Color = Color::rgb8(42, 42, 62);
 
 #[derive(Serialize, Deserialize, Builder, Debug, PartialEq, Eq)]
 pub struct Config {
@@ -21,6 +23,18 @@ impl Config {
         toml::from_str::<Config>(&config_string).map_err(Error::from)
     }
 
+    pub fn load_from_os_config() -> anyhow::Result<Self> {
+        let package_name = env::var("PKG_NAME")?;
+        let home_path =
+            env::var_os("HOME").ok_or(anyhow::Error::msg("Unable to get home directory path"))?;
+        let path = PathBuf::from(home_path)
+            .join(".config")
+            .join(package_name)
+            .join("Config.toml");
+
+        Config::load(path)
+    }
+
     pub fn get_window_size(&self) -> druid::Size {
         self.size.unwrap_or_default().into()
     }
@@ -30,7 +44,7 @@ impl Config {
             .bg_color
             .as_ref()
             .and_then(|hex| Color::from_hex_str(hex).ok())
-            .unwrap_or(Color::rgb8(42, 42, 62));
+            .unwrap_or(DEFAULT_BG_COLOR);
 
         env.set(BACKGROUND_COLOR_KEY, *color);
     }

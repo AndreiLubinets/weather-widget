@@ -5,6 +5,7 @@ use druid::text::{FontDescriptor, FontWeight};
 use druid::widget::{Align, BackgroundBrush, Flex, Image, Label, List, Spinner};
 use druid::{Color, Env, ImageBuf, Key, Widget, WidgetExt};
 use druid_widget_nursery::{FutureWidget, WidgetExt as NurseryWidgetExt};
+use log::error;
 
 const LOCATION_TEXT_SIZE: f64 = 18.;
 const SPINNER_SIZE: f64 = 32.;
@@ -45,7 +46,7 @@ fn build_day_list() -> impl Widget<State> {
                     false
                 }
                 Err(err) => {
-                    println!("{}", err);
+                    error!("{}", err);
                     data.error = Some("Unable to get data from the api".to_string());
                     true
                 }
@@ -87,7 +88,7 @@ fn get_condition_icon() -> impl Widget<DayState> {
             match *result {
                 Ok(res) => Image::new(res),
                 Err(err) => {
-                    println!("{}", err);
+                    error!("{}", err);
                     Image::new(ImageBuf::empty())
                 }
             }
