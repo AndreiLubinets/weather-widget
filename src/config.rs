@@ -24,7 +24,7 @@ impl Config {
     }
 
     pub fn load_from_os_config() -> anyhow::Result<Self> {
-        let package_name = env::var("PKG_NAME")?;
+        let package_name = env!("PKG_NAME");
         let home_path =
             env::var_os("HOME").ok_or(anyhow::Error::msg("Unable to get home directory path"))?;
         let path = PathBuf::from(home_path)
