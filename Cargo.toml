@@ -19,6 +19,9 @@ async-trait = "0.1.74"
 log = "0.4.20"
 simple_logger = "4.3.0"
 
+[patch.crates-io]
+time = { git = "https://github.com/time-rs/time"}
+
 [dev-dependencies]
 mockito = "1.2.0"
 
