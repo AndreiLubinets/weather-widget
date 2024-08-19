@@ -5,7 +5,7 @@ use weather_widget::api::image_buf::FromUrl;
 
 #[tokio::test]
 async fn image_buf_from_url_test() {
-    let mut server = mockito::Server::new();
+    let mut server = mockito::Server::new_async().await;
     let url = server.url();
     let image_url = String::from(&url) + "/imagepath.png";
     let expected = ImageBuf::from_file("tests/resources/image.png").unwrap();
