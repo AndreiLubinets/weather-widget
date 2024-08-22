@@ -7,6 +7,7 @@ Weather widget for Hyprland desktop powered by https://www.weatherapi.com.
 **TODO**
 
 ### Build:
+Install gtk3
 ```bash
 export API_KEY=<Insert api key>
 cargo build --release
@@ -15,6 +16,9 @@ cargo build --release
 
 
 ### Configuration File Example:
+
+Configuration is located at `$HOME/.config/weather-widget/Config.toml`
+
 ```toml
 uri = "http://api.weatherapi.com/v1/"
 location = "Paris, France"

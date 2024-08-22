@@ -19,7 +19,8 @@ async fn main() {
 
     let config = Config::load("Config.toml")
         .or_else(|_| Config::load_from_os_config())
-        .expect("No configuration file was found");
+        .or_else(|_| Config::new())
+        .expect("Unable to create configuration file");
     let key = env!("API_KEY");
 
     let main_window = WindowDesc::new(build_view())

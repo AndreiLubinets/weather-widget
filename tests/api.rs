@@ -32,7 +32,7 @@ fn build_weather_data() -> WeatherData {
 
 #[tokio::test]
 async fn get_test() {
-    let mut server = mockito::Server::new();
+    let mut server = mockito::Server::new_async().await;
     let url = server.url() + "/v1/";
     let weather_api = WeatherApi::new("key", url);
     let expected = build_weather_data();
@@ -66,7 +66,7 @@ async fn get_invalid_url() {
 
 #[tokio::test]
 async fn get_unparsable_response() {
-    let mut server = mockito::Server::new();
+    let mut server = mockito::Server::new_async().await;
     let url = server.url();
     let weather_api = WeatherApi::new("key", url);
 
