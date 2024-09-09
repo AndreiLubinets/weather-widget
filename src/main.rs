@@ -15,7 +15,10 @@ const APPLICATION_TITLE: &str = "Weather Widget";
 
 #[tokio::main]
 async fn main() {
-    simple_logger::init().expect("Failed to start logger");
+    env_logger::builder()
+        .filter_level(log::LevelFilter::Info)
+        .parse_default_env()
+        .init();
 
     let config = Config::load("Config.toml")
         .or_else(|_| Config::load_from_os_config())
