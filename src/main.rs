@@ -1,3 +1,5 @@
+use std::{env, process::exit};
+
 use api::api::WeatherApi;
 use config::Config;
 use druid::{AppLauncher, Env, WindowDesc};
@@ -20,11 +22,22 @@ async fn main() {
         .parse_default_env()
         .init();
 
+    let args: Vec<String> = env::args().collect();
+    dbg!(&args);
+
     let config = Config::load("Config.toml")
         .or_else(|_| Config::load_from_os_config())
         .or_else(|_| Config::new())
         .expect("Unable to create configuration file");
     let key = env!("API_KEY");
+
+    WeatherApi::new(key, &config.uri).set_as_global();
+
+    if args[1] == "nogui" {
+        let weather_data = WeatherApi::global().current(&config.location).await;
+        print!("{}", weather_data.unwrap().maxtemp_c);
+        exit(0);
+    }
 
     let main_window = WindowDesc::new(build_view())
         .title(APPLICATION_TITLE)
@@ -32,8 +45,6 @@ async fn main() {
         .window_size(config.get_window_size());
 
     let initial_state = State::initial(&config.location);
-
-    WeatherApi::new(key, &config.uri).set_as_global();
 
     AppLauncher::with_window(main_window)
         .configure_env(move |env: &mut Env, _data| config.set_env(env))

@@ -4,7 +4,7 @@ use anyhow::{Error, Result};
 use log::info;
 use reqwest::{Client, Url};
 
-use super::domain::WeatherData;
+use super::domain::{Day, WeatherData};
 
 static GLOBAL_WEBAPI: OnceLock<WeatherApi> = OnceLock::new();
 
@@ -24,7 +24,7 @@ impl WeatherApi {
         }
     }
 
-    pub async fn get(&self, location: impl Into<String>) -> Result<WeatherData> {
+    pub async fn forecast(&self, location: impl Into<String>) -> Result<WeatherData> {
         let uri = Url::parse(&self.url)?.join("forecast.json")?;
         info!("Fetching data from: {}", &uri);
         let forecast_days = 4;
@@ -40,6 +40,21 @@ impl WeatherApi {
             .send()
             .await?
             .json::<WeatherData>()
+            .await
+            .map_err(Error::from)
+    }
+
+    pub async fn current(&self, location: impl Into<String>) -> Result<Day> {
+        let uri = Url::parse(&self.url)?.join("current.json")?;
+        info!("Fetching data from: {}", &uri);
+
+        self.client
+            .get(uri)
+            .query(&[("key", &self.key), ("q", &location.into())])
+            .timeout(Duration::from_secs(10))
+            .send()
+            .await?
+            .json::<Day>()
             .await
             .map_err(Error::from)
     }
