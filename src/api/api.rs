@@ -1,12 +1,13 @@
-use std::{sync::OnceLock, time::Duration};
+use std::time::Duration;
 
 use anyhow::{Error, Result};
 use log::info;
 use reqwest::{Client, Url};
+use tokio::sync::OnceCell;
 
-use super::domain::{Day, WeatherData};
+use super::domain::{current::CurrentWeatherData, forecast::WeatherData};
 
-static GLOBAL_WEBAPI: OnceLock<WeatherApi> = OnceLock::new();
+static GLOBAL_WEBAPI: OnceCell<WeatherApi> = OnceCell::const_new();
 
 #[derive(Debug)]
 pub struct WeatherApi {
@@ -44,7 +45,7 @@ impl WeatherApi {
             .map_err(Error::from)
     }
 
-    pub async fn current(&self, location: impl Into<String>) -> Result<Day> {
+    pub async fn current(&self, location: impl Into<String>) -> Result<CurrentWeatherData> {
         let uri = Url::parse(&self.url)?.join("current.json")?;
         info!("Fetching data from: {}", &uri);
 
@@ -54,7 +55,7 @@ impl WeatherApi {
             .timeout(Duration::from_secs(10))
             .send()
             .await?
-            .json::<Day>()
+            .json::<CurrentWeatherData>()
             .await
             .map_err(Error::from)
     }
