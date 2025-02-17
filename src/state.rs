@@ -1,7 +1,7 @@
 use derive_builder::Builder;
 use druid::{im::Vector, Data, Lens};
 
-use crate::api::domain::{Forecastday, WeatherData};
+use crate::api::domain::forecast::{Forecastday, WeatherData};
 
 #[derive(Clone, Data, Lens, Debug, PartialEq, Eq, Default)]
 pub struct State {

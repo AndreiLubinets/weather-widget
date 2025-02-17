@@ -37,7 +37,7 @@ pub fn build_view() -> impl Widget<State> {
 
 fn build_day_list() -> impl Widget<State> {
     FutureWidget::new(
-        |data: &State, _env| WeatherApi::global().get(data.location.clone()),
+        |data: &State, _env| WeatherApi::global().forecast(data.location.clone()),
         Spinner::new().fix_size(SPINNER_SIZE, SPINNER_SIZE),
         |result, data, _env| {
             let error_flag = match *result {

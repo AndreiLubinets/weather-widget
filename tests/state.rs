@@ -1,6 +1,6 @@
 use druid::im::vector;
 use weather_widget::{
-    api::domain::{Condition, Day, Forecast, Forecastday, Location, WeatherData},
+    api::domain::forecast::{Condition, Day, Forecast, Forecastday, Location, WeatherData},
     state::{DayStateBuilder, State},
 };
 
