@@ -1,5 +1,5 @@
 pkgname="weather-widget"
-pkgver="0.2.3"
+pkgver="0.2.5"
 pkgrel="1"
 pkgdesc="Weather widget for Hyprland desktop powered by https://www.weatherapi.com."
 url="https://github.com/AndreiLubinets/weather-widget"

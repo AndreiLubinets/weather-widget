@@ -18,8 +18,15 @@ const APPLICATION_TITLE: &str = "Weather Widget";
 
 #[tokio::main]
 async fn main() {
+    let args = Args::parse();
+    let log_filter = if args.nogui {
+        log::LevelFilter::Error
+    } else {
+        log::LevelFilter::Info
+    };
+
     env_logger::builder()
-        .filter_level(log::LevelFilter::Info)
+        .filter_level(log_filter)
         .parse_default_env()
         .init();
 
@@ -31,7 +38,6 @@ async fn main() {
 
     WeatherApi::new(key, &config.uri).set_as_global();
 
-    let args = Args::parse();
     if args.nogui {
         let weather_data = WeatherApi::global().current(&config.location).await;
         match weather_data {
