@@ -2,3 +2,4 @@
 .env
 Config.toml
 shell.nix
+flake.lock

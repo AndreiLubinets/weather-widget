@@ -1,0 +1,30 @@
+
+name: Nix Rust
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: DeterminateSystems/determinate-nix-action@v3
+
+      - name: Build project
+        run: nix build . --impure --print-build-logs
+        env:
+          API_KEY: ${{ secrets.API_KEY }}
+
+      - name: Run Tests
+        run: nix develop --command cargo test
+        env:
+          API_KEY: ${{ secrets.API_KEY }}
